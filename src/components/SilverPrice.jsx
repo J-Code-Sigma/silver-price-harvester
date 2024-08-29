@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const fetchSilverPrice = async () => {
   const response = await fetch(
-    `https://finnhub.io/api/v1/quote?symbol=SILVER&token=${import.meta.env.VITE_FINNHUB_API_KEY}`
+    `https://finnhub.io/api/v1/quote?symbol=SI=F&token=${import.meta.env.VITE_FINNHUB_API_KEY}`
   );
   if (!response.ok) {
     throw new Error('Failed to fetch silver price');
@@ -29,10 +29,12 @@ const SilverPrice = () => {
         <CardTitle>Current Silver Price</CardTitle>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
+        {isLoading || !data ? (
           <Skeleton className="h-8 w-24" />
         ) : (
-          <p className="text-3xl font-bold">${data.c.toFixed(2)} USD</p>
+          <p className="text-3xl font-bold">
+            ${data.c ? data.c.toFixed(2) : 'N/A'} USD
+          </p>
         )}
       </CardContent>
     </Card>
