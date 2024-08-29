@@ -1,4 +1,4 @@
-import { HomeIcon } from "lucide-react";
+import { DollarSignIcon } from "lucide-react";
 import Index from "./pages/Index.jsx";
 
 /**
@@ -6,9 +6,9 @@ import Index from "./pages/Index.jsx";
  */
 export const navItems = [
   {
-    title: "Home",
+    title: "Silver Price",
     to: "/",
-    icon: <HomeIcon className="h-4 w-4" />,
+    icon: <DollarSignIcon className="h-4 w-4" />,
     page: <Index />,
   },
 ];
