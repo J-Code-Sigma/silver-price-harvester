@@ -24,15 +24,15 @@ const SilverPrice = () => {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle>Current Silver Price</CardTitle>
+    <Card className="w-full max-w-xs">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg">Current Silver Price</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading || !data ? (
           <Skeleton className="h-8 w-24" />
         ) : (
-          <p className="text-3xl font-bold">
+          <p className="text-2xl font-bold">
             ${data.c ? data.c.toFixed(2) : 'N/A'} USD
           </p>
         )}
