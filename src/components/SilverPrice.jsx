@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Loader2 } from "lucide-react";
 
 const fetchSilverPrice = async () => {
   const response = await fetch(
@@ -29,8 +30,13 @@ const SilverPrice = () => {
         <CardTitle className="text-lg">Current Silver Price</CardTitle>
       </CardHeader>
       <CardContent>
-        {isLoading || !data ? (
-          <Skeleton className="h-8 w-24" />
+        {isLoading ? (
+          <div className="flex items-center space-x-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <p>Loading...</p>
+          </div>
+        ) : !data ? (
+          <p className="text-red-500">Failed to load data</p>
         ) : (
           <p className="text-2xl font-bold">
             ${data.c ? data.c.toFixed(2) : 'N/A'} USD
