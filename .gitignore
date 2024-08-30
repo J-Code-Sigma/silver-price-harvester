@@ -28,4 +28,4 @@ dist-ssr
 .env
 
 #package
-package.lock.json
+package-lock.json
