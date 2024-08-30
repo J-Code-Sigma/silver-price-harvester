@@ -1,7 +1,7 @@
 import SilverPrice from "../components/SilverPrice";
 
 
-import chart from'../../public/xagusd_cur.png';
+import chart from'../../assets/xagusd_cur.png';
 
 const Index = () => {
   return (
