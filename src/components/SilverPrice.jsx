@@ -6,13 +6,7 @@ import { Loader2 } from "lucide-react";
 const fetchSilverPrice = async () => {
   const apiKey = import.meta.env.VITE_FINNHUB_API_KEY;
   const url = `https://finnhub.io/api/v1/quote?symbol=SI=F&token=${apiKey}`;
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({}), // Empty body
-  });
+  const response = await fetch(url);
   if (!response.ok) {
     throw new Error('Failed to fetch silver price');
   }
@@ -23,7 +17,6 @@ const SilverPrice = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['silverPrice'],
     queryFn: fetchSilverPrice,
-    refetchInterval: 60000, // Refetch every minute
   });
 
   if (error) {
