@@ -4,9 +4,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2 } from "lucide-react";
 
 const fetchSilverPrice = async () => {
-  const response = await fetch(
-    `https://finnhub.io/api/v1/quote?symbol=SI=F&token=${import.meta.env.VITE_FINNHUB_API_KEY}`
-  );
+  const response = await fetch('https://finnhub.io/api/v1/quote', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Finnhub-Token': import.meta.env.VITE_FINNHUB_API_KEY
+    },
+    body: JSON.stringify({
+      symbol: 'SI=F'
+    })
+  });
   if (!response.ok) {
     throw new Error('Failed to fetch silver price');
   }
