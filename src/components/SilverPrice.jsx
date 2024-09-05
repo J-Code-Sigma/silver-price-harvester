@@ -1,11 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2 } from "lucide-react";
 
 const fetchSilverPrice = async () => {
-  const apiKey = import.meta.env.VITE_FINNHUB_API_KEY;
-  const url = `https://finnhub.io/api/v1/quote?symbol=SI=F&token=${apiKey}`;
+  const apiKey = import.meta.env.VITE_METALS_API_KEY;
+  const url = `https://metals-api.com/api/latest?access_key=${apiKey}&base=USD&symbols=XAG`;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error('Failed to fetch silver price');
@@ -23,6 +22,8 @@ const SilverPrice = () => {
     return <div className="text-red-500">Error fetching silver price: {error.message}</div>;
   }
 
+  const silverPrice = data?.rates?.XAG ? (1 / data.rates.XAG).toFixed(2) : 'N/A';
+
   return (
     <Card className="w-full max-w-xs">
       <CardHeader className="pb-2">
@@ -38,7 +39,7 @@ const SilverPrice = () => {
           <p className="text-red-500">Failed to load data</p>
         ) : (
           <p className="text-2xl font-bold">
-            ${data.c ? data.c.toFixed(2) : 'N/A'} USD
+            ${silverPrice} USD per oz
           </p>
         )}
       </CardContent>
