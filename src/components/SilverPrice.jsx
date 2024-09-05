@@ -13,7 +13,7 @@ const fetchSilverPrice = async () => {
     if (polygonResponse.ok) {
       const data = await polygonResponse.json();
       if (data.results && data.results.length > 0) {
-        return data.results[0].c; // Closing price
+        return { price: data.results[0].c, source: 'Polygon.io' }; // Closing price
       }
     }
     throw new Error('Polygon API failed');
@@ -27,7 +27,7 @@ const fetchSilverPrice = async () => {
       if (finnhubResponse.ok) {
         const data = await finnhubResponse.json();
         if (data.c) {
-          return data.c; // Current price
+          return { price: data.c, source: 'Finnhub' }; // Current price
         }
       }
       throw new Error('Finnhub API failed');
@@ -39,7 +39,7 @@ const fetchSilverPrice = async () => {
 };
 
 const SilverPrice = () => {
-  const { data: silverPrice, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['silverPrice'],
     queryFn: fetchSilverPrice,
     refetchInterval: 60000, // Refetch every minute
@@ -58,10 +58,15 @@ const SilverPrice = () => {
           </div>
         ) : error ? (
           <p className="text-red-500">Error: {error.message}</p>
-        ) : silverPrice ? (
-          <p className="text-2xl font-bold">
-            ${silverPrice.toFixed(2)} USD per oz
-          </p>
+        ) : data ? (
+          <div>
+            <p className="text-2xl font-bold">
+              ${data.price.toFixed(2)} USD per oz
+            </p>
+            <p className="text-sm text-gray-500 mt-1">
+              Data source: {data.source}
+            </p>
+          </div>
         ) : (
           <p className="text-red-500">Failed to load data</p>
         )}
