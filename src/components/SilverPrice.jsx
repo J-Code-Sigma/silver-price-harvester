@@ -3,8 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 
 const fetchSilverPrice = async () => {
-  const apiKey = import.meta.env.VITE_METALS_API_KEY;
-  const url = `https://metals-api.com/api/latest?access_key=${apiKey}&base=USD&symbols=XAG`;
+  const url = 'https://api.coingecko.com/api/v3/simple/price?ids=silver&vs_currencies=usd';
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error('Failed to fetch silver price');
@@ -22,7 +21,7 @@ const SilverPrice = () => {
     return <div className="text-red-500">Error fetching silver price: {error.message}</div>;
   }
 
-  const silverPrice = data?.rates?.XAG ? (1 / data.rates.XAG).toFixed(2) : 'N/A';
+  const silverPrice = data?.silver?.usd ? data.silver.usd.toFixed(2) : 'N/A';
 
   return (
     <Card className="w-full max-w-xs">
