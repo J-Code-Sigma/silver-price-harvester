@@ -45,6 +45,15 @@ const SilverPrice = () => {
     refetchInterval: 60000, // Refetch every minute
   });
 
+  const getApiLink = (source) => {
+    if (source === 'Finnhub') {
+      return 'https://finnhub.io/docs/api/quote';
+    } else if (source === 'Polygon.io') {
+      return 'https://polygon.io/docs/stocks/get_v2_aggs_ticker__stocksticker__prev';
+    }
+    return '#';
+  };
+
   return (
     <Card className="w-full max-w-xs">
       <CardHeader className="pb-2">
@@ -64,7 +73,15 @@ const SilverPrice = () => {
               ${data.price.toFixed(2)} USD per oz
             </p>
             <p className="text-sm text-gray-500 mt-1">
-              Data source: {data.source}
+              Data source:{" "}
+              <a
+                href={getApiLink(data.source)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline"
+              >
+                {data.source}
+              </a>
             </p>
           </div>
         ) : (
