@@ -2,91 +2,44 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 
-const scrapeGoogleFinance = async () => {
-  const urls = [
-    'https://www.google.com/finance/quote/SIW00:COMEX',
-    'http://www.google.com/finance/quote/SIW00:COMEX'
-  ];
-
-  for (const url of urls) {
-    try {
-      const response = await fetch(url, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        },
-        mode: 'cors' // This is the default, but we're being explicit
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const html = await response.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const priceElement = doc.querySelector('div[data-last-price]');
-      if (priceElement) {
-        const price = parseFloat(priceElement.getAttribute('data-last-price'));
-        if (!isNaN(price) && price !== 0) {
-          return { price, source: 'Google Finance' };
-        }
-      }
-    } catch (error) {
-      console.error(`Error fetching from ${url}:`, error);
-      if (error.message.includes('CORS')) {
-        console.warn('CORS error detected. Moving to next data source.');
-        break; // Exit the loop if CORS error is detected
-      }
-    }
-  }
-  throw new Error('Failed to scrape or invalid price from all URLs');
-};
-
 const fetchSilverPrice = async () => {
-  const polygonApiKey = import.meta.env.VITE_POLYGON_API_KEY;
   const finnhubApiKey = import.meta.env.VITE_FINNHUB_API_KEY;
+  const polygonApiKey = import.meta.env.VITE_POLYGON_API_KEY;
 
   try {
-    // Try Google Finance scraping first
-    return await scrapeGoogleFinance();
-  } catch (scrapeError) {
-    console.error('Google Finance scraping failed:', scrapeError);
-
+    // Try Finnhub API first
+    const finnhubUrl = `https://finnhub.io/api/v1/quote?symbol=SI=F&token=${finnhubApiKey}`;
+    const finnhubResponse = await fetch(finnhubUrl);
+    if (finnhubResponse.ok) {
+      const data = await finnhubResponse.json();
+      if (data.c && data.c !== 0) {
+        return { price: data.c, source: 'Finnhub' };
+      }
+    }
+    throw new Error('Finnhub API failed or returned 0');
+  } catch (finnhubError) {
+    console.error('Finnhub API error:', finnhubError);
+    
+    // Fallback to Polygon.io API
     try {
-      // Try Finnhub API second
-      const finnhubUrl = `https://finnhub.io/api/v1/quote?symbol=SI=F&token=${finnhubApiKey}`;
-      const finnhubResponse = await fetch(finnhubUrl);
-      if (finnhubResponse.ok) {
-        const data = await finnhubResponse.json();
-        if (data.c && data.c !== 0) {
-          return { price: data.c, source: 'Finnhub' };
+      const polygonUrl = `https://api.polygon.io/v2/aggs/ticker/C:XAGUSD/prev?apiKey=${polygonApiKey}`;
+      const polygonResponse = await fetch(polygonUrl);
+      if (polygonResponse.ok) {
+        const data = await polygonResponse.json();
+        if (data.results && data.results.length > 0) {
+          return { price: data.results[0].c, source: 'Polygon.io' };
         }
       }
-      throw new Error('Finnhub API failed or returned 0');
-    } catch (finnhubError) {
-      console.error('Finnhub API error:', finnhubError);
-      
-      // Fallback to Polygon.io API
-      try {
-        const polygonUrl = `https://api.polygon.io/v2/aggs/ticker/C:XAGUSD/prev?apiKey=${polygonApiKey}`;
-        const polygonResponse = await fetch(polygonUrl);
-        if (polygonResponse.ok) {
-          const data = await polygonResponse.json();
-          if (data.results && data.results.length > 0) {
-            return { price: data.results[0].c, source: 'Polygon.io' };
-          }
-        }
-        throw new Error('Polygon API failed');
-      } catch (polygonError) {
-        console.error('Polygon API error:', polygonError);
-        throw new Error('All data sources failed to fetch silver price');
-      }
+      throw new Error('Polygon API failed');
+    } catch (polygonError) {
+      console.error('Polygon API error:', polygonError);
+      throw new Error('All data sources failed to fetch silver price');
     }
   }
 };
 
 const getApiLink = (source) => {
   switch (source) {
-    case 'Google Finance':
-      return 'https://www.google.com/finance/quote/SIW00:COMEX';
     case 'Finnhub':
       return 'https://finnhub.io/docs/api/quote';
     case 'Polygon.io':
@@ -132,11 +85,6 @@ const SilverPrice = () => {
                 {data.source}
               </a>
             </p>
-            {data.source !== 'Google Finance' && (
-              <p className="text-xs text-gray-400 mt-1">
-                Note: Direct scraping from Google Finance is not possible due to CORS restrictions.
-              </p>
-            )}
           </div>
         ) : (
           <p className="text-red-500">Failed to load data</p>
