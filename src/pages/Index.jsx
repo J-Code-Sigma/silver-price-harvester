@@ -9,7 +9,7 @@ const Index = () => {
           <h1 className="text-4xl font-bold mb-8">Silver Price Tracker</h1>
           <SilverPrice />
         </div>
-        <div className="w-full md:w-1/2 h-96 bg-white rounded-lg shadow-md overflow-hidden p-4">
+        <div className="w-full md:w-1/2 h-100 bg-white rounded-lg shadow-md overflow-hidden p-4">
           <h3 className="mb-2">Note: image up to date as of 08/29/2024</h3>
           <a 
             href="https://www.macrotrends.net/1470/historical-silver-prices-100-year-chart"
