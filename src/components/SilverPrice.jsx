@@ -7,32 +7,32 @@ const fetchSilverPrice = async () => {
   const finnhubApiKey = import.meta.env.VITE_FINNHUB_API_KEY;
 
   try {
-    // Try Polygon.io API first
-    const polygonUrl = `https://api.polygon.io/v2/aggs/ticker/C:XAGUSD/prev?apiKey=${polygonApiKey}`;
-    const polygonResponse = await fetch(polygonUrl);
-    if (polygonResponse.ok) {
-      const data = await polygonResponse.json();
-      if (data.results && data.results.length > 0) {
-        return { price: data.results[0].c, source: 'Polygon.io' }; // Closing price
+    // Try Finnhub API first
+    const finnhubUrl = `https://finnhub.io/api/v1/quote?symbol=SI=F&token=${finnhubApiKey}`;
+    const finnhubResponse = await fetch(finnhubUrl);
+    if (finnhubResponse.ok) {
+      const data = await finnhubResponse.json();
+      if (data.c && data.c !== 0) {
+        return { price: data.c, source: 'Finnhub' }; // Current price
       }
     }
-    throw new Error('Polygon API failed');
+    throw new Error('Finnhub API failed or returned 0');
   } catch (error) {
-    console.error('Polygon API error:', error);
+    console.error('Finnhub API error:', error);
     
-    // Fallback to Finnhub API
+    // Fallback to Polygon.io API
     try {
-      const finnhubUrl = `https://finnhub.io/api/v1/quote?symbol=SI=F&token=${finnhubApiKey}`;
-      const finnhubResponse = await fetch(finnhubUrl);
-      if (finnhubResponse.ok) {
-        const data = await finnhubResponse.json();
-        if (data.c) {
-          return { price: data.c, source: 'Finnhub' }; // Current price
+      const polygonUrl = `https://api.polygon.io/v2/aggs/ticker/C:XAGUSD/prev?apiKey=${polygonApiKey}`;
+      const polygonResponse = await fetch(polygonUrl);
+      if (polygonResponse.ok) {
+        const data = await polygonResponse.json();
+        if (data.results && data.results.length > 0) {
+          return { price: data.results[0].c, source: 'Polygon.io' }; // Closing price
         }
       }
-      throw new Error('Finnhub API failed');
-    } catch (finnhubError) {
-      console.error('Finnhub API error:', finnhubError);
+      throw new Error('Polygon API failed');
+    } catch (polygonError) {
+      console.error('Polygon API error:', polygonError);
       throw new Error('Both APIs failed to fetch silver price');
     }
   }
