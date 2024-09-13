@@ -13,7 +13,8 @@ const scrapeGoogleFinance = async () => {
       const response = await fetch(url, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        }
+        },
+        mode: 'cors' // This is the default, but we're being explicit
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -30,6 +31,10 @@ const scrapeGoogleFinance = async () => {
       }
     } catch (error) {
       console.error(`Error fetching from ${url}:`, error);
+      if (error.message.includes('CORS')) {
+        console.warn('CORS error detected. Moving to next data source.');
+        break; // Exit the loop if CORS error is detected
+      }
     }
   }
   throw new Error('Failed to scrape or invalid price from all URLs');
@@ -127,6 +132,11 @@ const SilverPrice = () => {
                 {data.source}
               </a>
             </p>
+            {data.source !== 'Google Finance' && (
+              <p className="text-xs text-gray-400 mt-1">
+                Note: Direct scraping from Google Finance is not possible due to CORS restrictions.
+              </p>
+            )}
           </div>
         ) : (
           <p className="text-red-500">Failed to load data</p>
