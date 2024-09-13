@@ -3,23 +3,36 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 
 const scrapeGoogleFinance = async () => {
-  try {
-    const response = await fetch('https://www.google.com/finance/quote/SIW00:COMEX');
-    const html = await response.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-    const priceElement = doc.querySelector('div[data-last-price]');
-    if (priceElement) {
-      const price = parseFloat(priceElement.getAttribute('data-last-price'));
-      if (!isNaN(price) && price !== 0) {
-        return { price, source: 'Google Finance' };
+  const urls = [
+    'https://www.google.com/finance/quote/SIW00:COMEX',
+    'http://www.google.com/finance/quote/SIW00:COMEX'
+  ];
+
+  for (const url of urls) {
+    try {
+      const response = await fetch(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+      const html = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const priceElement = doc.querySelector('div[data-last-price]');
+      if (priceElement) {
+        const price = parseFloat(priceElement.getAttribute('data-last-price'));
+        if (!isNaN(price) && price !== 0) {
+          return { price, source: 'Google Finance' };
+        }
+      }
+    } catch (error) {
+      console.error(`Error fetching from ${url}:`, error);
     }
-    throw new Error('Failed to scrape or invalid price');
-  } catch (error) {
-    console.error('Google Finance scraping error:', error);
-    throw error;
   }
+  throw new Error('Failed to scrape or invalid price from all URLs');
 };
 
 const fetchSilverPrice = async () => {
