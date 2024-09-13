@@ -2,39 +2,79 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 
+const scrapeGoogleFinance = async () => {
+  try {
+    const response = await fetch('https://www.google.com/finance/quote/SIW00:COMEX');
+    const html = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const priceElement = doc.querySelector('div[data-last-price]');
+    if (priceElement) {
+      const price = parseFloat(priceElement.getAttribute('data-last-price'));
+      if (!isNaN(price) && price !== 0) {
+        return { price, source: 'Google Finance' };
+      }
+    }
+    throw new Error('Failed to scrape or invalid price');
+  } catch (error) {
+    console.error('Google Finance scraping error:', error);
+    throw error;
+  }
+};
+
 const fetchSilverPrice = async () => {
   const polygonApiKey = import.meta.env.VITE_POLYGON_API_KEY;
   const finnhubApiKey = import.meta.env.VITE_FINNHUB_API_KEY;
 
   try {
-    // Try Finnhub API first
-    const finnhubUrl = `https://finnhub.io/api/v1/quote?symbol=SI=F&token=${finnhubApiKey}`;
-    const finnhubResponse = await fetch(finnhubUrl);
-    if (finnhubResponse.ok) {
-      const data = await finnhubResponse.json();
-      if (data.c && data.c !== 0) {
-        return { price: data.c, source: 'Finnhub' }; // Current price
-      }
-    }
-    throw new Error('Finnhub API failed or returned 0');
-  } catch (error) {
-    console.error('Finnhub API error:', error);
-    
-    // Fallback to Polygon.io API
+    // Try Google Finance scraping first
+    return await scrapeGoogleFinance();
+  } catch (scrapeError) {
+    console.error('Google Finance scraping failed:', scrapeError);
+
     try {
-      const polygonUrl = `https://api.polygon.io/v2/aggs/ticker/C:XAGUSD/prev?apiKey=${polygonApiKey}`;
-      const polygonResponse = await fetch(polygonUrl);
-      if (polygonResponse.ok) {
-        const data = await polygonResponse.json();
-        if (data.results && data.results.length > 0) {
-          return { price: data.results[0].c, source: 'Polygon.io' }; // Closing price
+      // Try Finnhub API second
+      const finnhubUrl = `https://finnhub.io/api/v1/quote?symbol=SI=F&token=${finnhubApiKey}`;
+      const finnhubResponse = await fetch(finnhubUrl);
+      if (finnhubResponse.ok) {
+        const data = await finnhubResponse.json();
+        if (data.c && data.c !== 0) {
+          return { price: data.c, source: 'Finnhub' };
         }
       }
-      throw new Error('Polygon API failed');
-    } catch (polygonError) {
-      console.error('Polygon API error:', polygonError);
-      throw new Error('Both APIs failed to fetch silver price');
+      throw new Error('Finnhub API failed or returned 0');
+    } catch (finnhubError) {
+      console.error('Finnhub API error:', finnhubError);
+      
+      // Fallback to Polygon.io API
+      try {
+        const polygonUrl = `https://api.polygon.io/v2/aggs/ticker/C:XAGUSD/prev?apiKey=${polygonApiKey}`;
+        const polygonResponse = await fetch(polygonUrl);
+        if (polygonResponse.ok) {
+          const data = await polygonResponse.json();
+          if (data.results && data.results.length > 0) {
+            return { price: data.results[0].c, source: 'Polygon.io' };
+          }
+        }
+        throw new Error('Polygon API failed');
+      } catch (polygonError) {
+        console.error('Polygon API error:', polygonError);
+        throw new Error('All data sources failed to fetch silver price');
+      }
     }
+  }
+};
+
+const getApiLink = (source) => {
+  switch (source) {
+    case 'Google Finance':
+      return 'https://www.google.com/finance/quote/SIW00:COMEX';
+    case 'Finnhub':
+      return 'https://finnhub.io/docs/api/quote';
+    case 'Polygon.io':
+      return 'https://polygon.io/docs/stocks/get_v2_aggs_ticker__stocksticker__prev';
+    default:
+      return '#';
   }
 };
 
@@ -44,15 +84,6 @@ const SilverPrice = () => {
     queryFn: fetchSilverPrice,
     refetchInterval: 60000, // Refetch every minute
   });
-
-  const getApiLink = (source) => {
-    if (source === 'Finnhub') {
-      return 'https://finnhub.io/docs/api/quote';
-    } else if (source === 'Polygon.io') {
-      return 'https://polygon.io/docs/stocks/get_v2_aggs_ticker__stocksticker__prev';
-    }
-    return '#';
-  };
 
   return (
     <Card className="w-full max-w-xs">
