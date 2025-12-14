@@ -103,21 +103,7 @@ const SilverPrice = ({ purchases = [] }) => {
   return (
     <Card className="w-full">
       <CardHeader className="pb-2">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-          <CardTitle className="text-lg">Current Silver Price per 1 oz</CardTitle>
-          <Select value={selectedSource} onValueChange={setSelectedSource}>
-            <SelectTrigger className="w-full sm:w-[160px] h-8 text-xs">
-              <SelectValue placeholder="Select source" />
-            </SelectTrigger>
-            <SelectContent>
-              {SOURCES.map((source) => (
-                <SelectItem key={source.value} value={source.value}>
-                  {source.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <CardTitle className="text-lg">Current Silver Price per 1 oz</CardTitle>
       </CardHeader>
       <CardContent className="relative">
         {showLoader && (
@@ -143,7 +129,7 @@ const SilverPrice = ({ purchases = [] }) => {
               <p className="text-3xl font-bold">
                 ${data.price.toFixed(2)} USD
               </p>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-muted-foreground mt-1">
                 Source:{" "}
                 <a
                   href={getApiLink(data.source)}
@@ -154,6 +140,18 @@ const SilverPrice = ({ purchases = [] }) => {
                   {data.source}
                 </a>
               </p>
+              <Select value={selectedSource} onValueChange={setSelectedSource}>
+                <SelectTrigger className="w-full sm:w-[220px] h-8 text-xs mt-2">
+                  <SelectValue placeholder="Select source" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SOURCES.map((source) => (
+                    <SelectItem key={source.value} value={source.value}>
+                      {source.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             
             {purchases.length > 0 && (
