@@ -59,7 +59,7 @@ const PriceChange = ({ currentPrice, purchasePrice, label, description, image, i
         </div>
       )}
       <div className="flex-1 min-w-0 space-y-1">
-        <div className={`flex items-center gap-1 ${isPositive ? "text-green-600" : "text-red-600"}`}>
+        <div className={`flex items-center gap-1 justify-end ${isPositive ? "text-green-600" : "text-red-600"}`}>
           {isPositive ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
           <span className="font-semibold text-sm">
             {isPositive ? "+" : ""}${change.toFixed(2)} ({isPositive ? "+" : ""}{changePercent}%)
