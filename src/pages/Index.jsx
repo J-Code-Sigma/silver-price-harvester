@@ -1,5 +1,6 @@
 import SilverPrice from "../components/SilverPrice";
 import chart from '../../assets/xagusd_cur.png';
+import silverDivisible2025 from "@/assets/silver-divisible-2025.jpg";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp, TrendingDown } from "lucide-react";
 
@@ -11,8 +12,9 @@ const purchases = [
   },
   {
     date: "10/14/2025",
-    description: "1 oz Silver (splittable 1/4 pieces)",
+    description: "2025 Christmas Present - 1 oz Silver (splittable into 1/4 pieces)",
     purchasePrice: 58.5,
+    image: silverDivisible2025,
   },
 ];
 

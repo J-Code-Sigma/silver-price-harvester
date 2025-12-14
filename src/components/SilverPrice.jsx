@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, TrendingUp, TrendingDown } from "lucide-react";
+import silverDivisible2025 from "@/assets/silver-divisible-2025.jpg";
 
 const fetchSilverPrice = async () => {
   const response = await fetch(
@@ -32,19 +33,34 @@ const getApiLink = (source) => {
   }
 };
 
-const PriceChange = ({ currentPrice, purchasePrice, label }) => {
+const PriceChange = ({ currentPrice, purchasePrice, label, description, image }) => {
   const change = currentPrice - purchasePrice;
   const changePercent = ((change / purchasePrice) * 100).toFixed(1);
   const isPositive = change >= 0;
 
   return (
-    <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-      <span className="text-sm text-gray-600">{label}</span>
-      <div className={`flex items-center gap-1 ${isPositive ? "text-green-600" : "text-red-600"}`}>
-        {isPositive ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-        <span className="font-semibold text-sm">
-          {isPositive ? "+" : ""}${change.toFixed(2)} ({isPositive ? "+" : ""}{changePercent}%)
-        </span>
+    <div className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
+      {image && (
+        <img 
+          src={image} 
+          alt={label} 
+          className="w-16 h-16 object-cover rounded-md flex-shrink-0"
+        />
+      )}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-sm font-medium text-foreground">{label}</span>
+          <div className={`flex items-center gap-1 ${isPositive ? "text-green-600" : "text-red-600"}`}>
+            {isPositive ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+            <span className="font-semibold text-sm">
+              {isPositive ? "+" : ""}${change.toFixed(2)} ({isPositive ? "+" : ""}{changePercent}%)
+            </span>
+          </div>
+        </div>
+        {description && (
+          <p className="text-xs text-muted-foreground mt-1">{description}</p>
+        )}
+        <p className="text-xs text-muted-foreground">Purchased at ${purchasePrice.toFixed(2)}/oz</p>
       </div>
     </div>
   );
@@ -100,6 +116,8 @@ const SilverPrice = ({ purchases = [] }) => {
                     currentPrice={data.price}
                     purchasePrice={purchase.purchasePrice}
                     label={purchase.date}
+                    description={purchase.description}
+                    image={purchase.image}
                   />
                 ))}
               </div>
