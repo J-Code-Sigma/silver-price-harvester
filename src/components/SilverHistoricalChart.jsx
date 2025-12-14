@@ -61,7 +61,7 @@ const SilverHistoricalChart = ({ purchases = [] }) => {
   return (
     <Card className="h-full">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg">1 oz Silver Price Tracker</CardTitle>
+        <CardTitle className="text-lg">Merry Chrysler!</CardTitle>
       </CardHeader>
       <CardContent>
         <p className="text-sm text-muted-foreground mb-4">
