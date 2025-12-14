@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Loader2, TrendingUp, TrendingDown } from "lucide-react";
 
 const fetchSilverPrice = async () => {
   const response = await fetch(
@@ -32,7 +32,25 @@ const getApiLink = (source) => {
   }
 };
 
-const SilverPrice = () => {
+const PriceChange = ({ currentPrice, purchasePrice, label }) => {
+  const change = currentPrice - purchasePrice;
+  const changePercent = ((change / purchasePrice) * 100).toFixed(1);
+  const isPositive = change >= 0;
+
+  return (
+    <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+      <span className="text-sm text-gray-600">{label}</span>
+      <div className={`flex items-center gap-1 ${isPositive ? "text-green-600" : "text-red-600"}`}>
+        {isPositive ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+        <span className="font-semibold text-sm">
+          {isPositive ? "+" : ""}${change.toFixed(2)} ({isPositive ? "+" : ""}{changePercent}%)
+        </span>
+      </div>
+    </div>
+  );
+};
+
+const SilverPrice = ({ purchases = [] }) => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["silverPrice"],
     queryFn: fetchSilverPrice,
@@ -42,7 +60,7 @@ const SilverPrice = () => {
   });
 
   return (
-    <Card className="w-full max-w-xs">
+    <Card className="w-full">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg">Current Silver Price per 1 oz</CardTitle>
       </CardHeader>
@@ -55,21 +73,37 @@ const SilverPrice = () => {
         ) : error ? (
           <p className="text-red-500">Error: {error.message}</p>
         ) : data ? (
-          <div>
-            <p className="text-2xl font-bold">
-              ${data.price.toFixed(2)} USD per oz
-            </p>
-            <p className="text-sm text-gray-500 mt-1">
-              Data source:{" "}
-              <a
-                href={getApiLink(data.source)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
-              >
-                {data.source}
-              </a>
-            </p>
+          <div className="space-y-3">
+            <div>
+              <p className="text-3xl font-bold">
+                ${data.price.toFixed(2)} USD
+              </p>
+              <p className="text-sm text-gray-500 mt-1">
+                Source:{" "}
+                <a
+                  href={getApiLink(data.source)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:underline"
+                >
+                  {data.source}
+                </a>
+              </p>
+            </div>
+            
+            {purchases.length > 0 && (
+              <div className="space-y-2 pt-2 border-t">
+                <p className="text-sm font-medium text-gray-700">Change from purchases:</p>
+                {purchases.map((purchase, idx) => (
+                  <PriceChange
+                    key={idx}
+                    currentPrice={data.price}
+                    purchasePrice={purchase.purchasePrice}
+                    label={purchase.date}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           <p className="text-red-500">Failed to load data</p>
