@@ -1,37 +1,40 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 
 const fetchSilverPrice = async () => {
-  const { data, error } = await supabase.functions.invoke('get-silver-price');
-  
-  if (error) {
-    console.error('Edge function error:', error);
-    throw new Error('Failed to fetch silver price');
+  const response = await fetch(
+    "https://ijmytxjcivenbqficxbx.supabase.co/functions/v1/get-silver-price"
+  );
+
+  if (!response.ok) {
+    console.error("Edge function error:", response.status, response.statusText);
+    throw new Error("Failed to fetch silver price");
   }
-  
+
+  const data = await response.json();
+
   if (data.error) {
     throw new Error(data.error);
   }
-  
+
   return { price: data.price, source: data.source };
 };
 
 const getApiLink = (source) => {
   switch (source) {
-    case 'Finnhub':
-      return 'https://finnhub.io/docs/api/quote';
-    case 'Polygon.io':
-      return 'https://polygon.io/docs/stocks/get_v2_aggs_ticker__stocksticker__prev';
+    case "Finnhub":
+      return "https://finnhub.io/docs/api/quote";
+    case "Polygon.io":
+      return "https://polygon.io/docs/stocks/get_v2_aggs_ticker__stocksticker__prev";
     default:
-      return '#';
+      return "#";
   }
 };
 
 const SilverPrice = () => {
   const { data, isLoading, error } = useQuery({
-    queryKey: ['silverPrice'],
+    queryKey: ["silverPrice"],
     queryFn: fetchSilverPrice,
     refetchInterval: 60000, // Refetch every minute
   });
