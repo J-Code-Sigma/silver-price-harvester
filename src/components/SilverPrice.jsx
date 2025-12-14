@@ -55,40 +55,31 @@ const PriceChange = ({ currentPrice, purchasePrice, label, description, image, i
   const displayImages = images || (image ? [image] : []);
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3 p-3 bg-muted/50 rounded-lg">
-      <div className="flex items-start justify-between sm:justify-start gap-2 sm:flex-1 min-w-0">
-        <div className="flex-shrink-0">
-          <span className="text-sm font-medium text-foreground block mb-1">{label}</span>
-          {displayImages.length > 0 && (
-            <div className="flex gap-1">
-              {displayImages.map((img, idx) => (
-                <img 
-                  key={idx}
-                  src={img} 
-                  alt={`${label} ${idx + 1}`} 
-                  className="w-12 h-12 object-cover rounded-md"
-                />
-              ))}
-            </div>
-          )}
-        </div>
-        <div className={`flex items-center gap-1 sm:hidden ${isPositive ? "text-green-600" : "text-red-600"}`}>
-          {isPositive ? <TrendingUp className="h-4 w-4 flex-shrink-0" /> : <TrendingDown className="h-4 w-4 flex-shrink-0" />}
-          <span className="font-semibold text-sm whitespace-nowrap">
-            {isPositive ? "+" : ""}${change.toFixed(2)} ({isPositive ? "+" : ""}{changePercent}%)
-          </span>
-        </div>
-      </div>
-      <div className="flex-shrink-0">
+    <div className="flex items-start justify-between gap-3 p-3 bg-muted/50 rounded-lg">
+      <div className="flex-1 min-w-0">
+        <span className="text-sm font-medium text-foreground block mb-1">{label}</span>
+        {displayImages.length > 0 && (
+          <div className="flex gap-1 mb-1">
+            {displayImages.map((img, idx) => (
+              <img 
+                key={idx}
+                src={img} 
+                alt={`${label} ${idx + 1}`} 
+                className="w-12 h-12 object-cover rounded-md"
+              />
+            ))}
+          </div>
+        )}
         {description && (
           <p className="text-xs text-muted-foreground">{description}</p>
         )}
         <p className="text-xs text-muted-foreground">${purchasePrice.toFixed(2)}/oz</p>
       </div>
-      <div className={`hidden sm:flex items-center gap-1 flex-shrink-0 ${isPositive ? "text-green-600" : "text-red-600"}`}>
-        {isPositive ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+      <div className={`flex items-center gap-1 flex-shrink-0 ${isPositive ? "text-green-600" : "text-red-600"}`}>
+        {isPositive ? <TrendingUp className="h-4 w-4 flex-shrink-0" /> : <TrendingDown className="h-4 w-4 flex-shrink-0" />}
         <span className="font-semibold text-sm whitespace-nowrap">
-          {isPositive ? "+" : ""}${change.toFixed(2)} ({isPositive ? "+" : ""}{changePercent}%)
+          {isPositive ? "+" : ""}${change.toFixed(2)}
+          <span className="hidden sm:inline"> ({isPositive ? "+" : ""}{changePercent}%)</span>
         </span>
       </div>
     </div>
