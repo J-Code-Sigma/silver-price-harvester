@@ -1,5 +1,5 @@
 import SilverPrice from "../components/SilverPrice";
-import chart from '../../assets/xagusd_cur.png';
+import SilverHistoricalChart from "../components/SilverHistoricalChart";
 import silverDivisible2025 from "@/assets/silver-divisible-2025.jpg";
 import silver2024Coins from "@/assets/silver-2024-coins.jpg";
 import silver2024Bar from "@/assets/silver-2024-bar.jpg";
@@ -31,25 +31,7 @@ const Index = () => {
           <SilverPrice purchases={purchases} />
           
           {/* Right column: Chart */}
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Historical Chart</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-500 mb-2">
-                Note: image up to date as of 08/29/2024.{" "}
-                <a 
-                  href="https://www.macrotrends.net/1470/historical-silver-prices-100-year-chart"
-                  className="text-blue-500 hover:underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  View complete chart
-                </a>
-              </p>
-              <img src={chart} alt="Silver Price Chart" className="w-full h-auto rounded" />
-            </CardContent>
-          </Card>
+          <SilverHistoricalChart purchases={purchases} />
         </div>
       </div>
     </div>
