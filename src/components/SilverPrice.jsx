@@ -55,9 +55,9 @@ const PriceChange = ({ currentPrice, purchasePrice, label, description, image, i
           ))}
         </div>
       )}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-sm font-medium text-foreground">{label}</span>
+      <div className="flex-1 min-w-0 space-y-1">
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-medium text-foreground w-24 flex-shrink-0">{label}</span>
           <div className={`flex items-center gap-1 ${isPositive ? "text-green-600" : "text-red-600"}`}>
             {isPositive ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
             <span className="font-semibold text-sm">
@@ -66,7 +66,7 @@ const PriceChange = ({ currentPrice, purchasePrice, label, description, image, i
           </div>
         </div>
         {description && (
-          <p className="text-xs text-muted-foreground mt-1">{description}</p>
+          <p className="text-xs text-muted-foreground">{description}</p>
         )}
         <p className="text-xs text-muted-foreground">Purchased at ${purchasePrice.toFixed(2)}/oz</p>
       </div>
