@@ -27,17 +27,17 @@ const SilverHistoricalChart = ({ purchases = [] }) => {
           })
           .filter(item => !isNaN(item.value));
 
-        // Sample data to reduce points for performance (one per year)
-        const yearlyData = [];
-        let lastYear = null;
+        // Sample data to reduce points for performance (take last entry per year to get year-end values)
+        const yearlyData = {};
         for (const item of parsed) {
-          if (item.year !== lastYear) {
-            yearlyData.push(item);
-            lastYear = item.year;
-          }
+          // Always overwrite so we keep the latest (last) entry for each year
+          yearlyData[item.year] = item;
         }
 
-        setData(yearlyData);
+        // Convert to array and sort by year
+        const sortedData = Object.values(yearlyData).sort((a, b) => a.year - b.year);
+
+        setData(sortedData);
       } catch (error) {
         console.error("Error loading chart data:", error);
       } finally {
