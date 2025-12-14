@@ -115,7 +115,7 @@ const SilverHistoricalChart = ({ purchases = [] }) => {
                       stroke="#ef4444" 
                       strokeDasharray="3 3"
                       label={{ 
-                        value: `${year} $${purchase.purchasePrice}`, 
+                        value: `${year} $${purchase.purchasePrice.toFixed(2)}`, 
                         position: 'insideTopRight',
                         fontSize: 10,
                         fill: '#ef4444'
