@@ -60,7 +60,7 @@ const PriceChange = ({ currentPrice, purchasePrice, label, description, image, i
         {description && (
           <p className="text-xs text-muted-foreground mt-1">{description}</p>
         )}
-        <p className="text-xs text-muted-foreground">Purchased at ${purchasePrice.toFixed(2)}/oz</p>
+        <p className="text-xs text-muted-foreground">${purchasePrice.toFixed(2)}/oz</p>
       </div>
       <div className="flex-1 min-w-0">
         <div className={`flex items-center gap-1 justify-end ${isPositive ? "text-green-600" : "text-red-600"}`}>
