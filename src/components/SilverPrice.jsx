@@ -2,13 +2,12 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, TrendingUp, TrendingDown } from "lucide-react";
+import { Loader2, TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
 import silverDivisible2025 from "@/assets/silver-divisible-2025.jpg";
 
 const SOURCES = [
   { value: "auto", label: "Auto (Best Available)" },
   { value: "polygon", label: "Polygon.io" },
-  { value: "finnhub", label: "Finnhub" },
   { value: "yahoo", label: "Yahoo Finance" },
 ];
 
@@ -95,11 +94,12 @@ const SilverPrice = ({ purchases = [] }) => {
     queryKey: ["silverPrice", selectedSource],
     queryFn: () => fetchSilverPrice(selectedSource),
     refetchInterval: 60000,
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+    retry: 1,
+    retryDelay: 1000,
+    keepPreviousData: true,
   });
 
-  const showLoader = isLoading || isFetching;
+  const showLoader = isLoading || (isFetching && !data);
 
   return (
     <Card className="w-full">
@@ -130,9 +130,13 @@ const SilverPrice = ({ purchases = [] }) => {
           </div>
         )}
         {error && !data ? (
-          <div className="text-red-500">
-            <p>Error: {error.message}</p>
-            <p className="text-sm mt-1">Please refresh this page, that may fix it.</p>
+          <div className="flex items-start gap-2 text-amber-600 bg-amber-50 p-3 rounded-lg">
+            <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-medium">Source unavailable</p>
+              <p className="text-sm">{error.message}</p>
+              <p className="text-sm mt-1">Try selecting a different source above.</p>
+            </div>
           </div>
         ) : data ? (
           <div className="space-y-3">
