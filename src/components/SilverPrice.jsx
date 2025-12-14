@@ -36,7 +36,9 @@ const SilverPrice = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["silverPrice"],
     queryFn: fetchSilverPrice,
-    refetchInterval: 60000, // Refetch every minute
+    refetchInterval: 60000,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 
   return (
