@@ -61,11 +61,36 @@ serve(async (req) => {
     console.error('Polygon API error:', polygonError);
   }
 
+  // Fallback to Yahoo Finance API
+  try {
+    console.log('Trying Yahoo Finance API...');
+    const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/SI=F?interval=1d&range=1d`;
+    const yahooResponse = await fetch(yahooUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
+    });
+    
+    if (yahooResponse.ok) {
+      const data = await yahooResponse.json();
+      console.log('Yahoo Finance response:', JSON.stringify(data));
+      
+      const price = data?.chart?.result?.[0]?.meta?.regularMarketPrice;
+      if (price && price > 0) {
+        return new Response(
+          JSON.stringify({ price: price, source: 'Yahoo Finance' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+  } catch (yahooError) {
+    console.error('Yahoo Finance API error:', yahooError);
+  }
+
   // All live sources failed - return last known approximate price as fallback
-  // This typically happens on weekends when markets are closed
   console.log('All live sources unavailable, using fallback price');
   return new Response(
-    JSON.stringify({ price: 31.00, source: 'Fallback (markets closed)' }),
+    JSON.stringify({ price: 61.93, source: 'Fallback (markets closed)' }),
     { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
   );
 });
