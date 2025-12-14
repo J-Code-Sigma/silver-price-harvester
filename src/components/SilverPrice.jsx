@@ -1,41 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const fetchSilverPrice = async () => {
-  const finnhubApiKey = import.meta.env.VITE_FINNHUB_API_KEY;
-  const polygonApiKey = import.meta.env.VITE_POLYGON_API_KEY;
-
-  try {
-    // Try Finnhub API first
-    const finnhubUrl = `https://finnhub.io/api/v1/quote?symbol=SI=F&token=${finnhubApiKey}`;
-    const finnhubResponse = await fetch(finnhubUrl);
-    if (finnhubResponse.ok) {
-      const data = await finnhubResponse.json();
-      if (data.c && data.c !== 0) {
-        return { price: data.c, source: 'Finnhub' };
-      }
-    }
-    throw new Error('Finnhub API failed or returned 0');
-  } catch (finnhubError) {
-    console.error('Finnhub API error:', finnhubError);
-    
-    // Fallback to Polygon.io API
-    try {
-      const polygonUrl = `https://api.polygon.io/v2/aggs/ticker/C:XAGUSD/prev?apiKey=${polygonApiKey}`;
-      const polygonResponse = await fetch(polygonUrl);
-      if (polygonResponse.ok) {
-        const data = await polygonResponse.json();
-        if (data.results && data.results.length > 0) {
-          return { price: data.results[0].c, source: 'Polygon.io' };
-        }
-      }
-      throw new Error('Polygon API failed');
-    } catch (polygonError) {
-      console.error('Polygon API error:', polygonError);
-      throw new Error('All data sources failed to fetch silver price');
-    }
+  const { data, error } = await supabase.functions.invoke('get-silver-price');
+  
+  if (error) {
+    console.error('Edge function error:', error);
+    throw new Error('Failed to fetch silver price');
   }
+  
+  if (data.error) {
+    throw new Error(data.error);
+  }
+  
+  return { price: data.price, source: data.source };
 };
 
 const getApiLink = (source) => {
