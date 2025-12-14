@@ -4,7 +4,6 @@ import silverDivisible2025 from "@/assets/silver-divisible-2025.jpg";
 import silver2024Coins from "@/assets/silver-2024-coins.jpg";
 import silver2024Bar from "@/assets/silver-2024-bar.jpg";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendingUp, TrendingDown } from "lucide-react";
 
 const purchases = [
   {
@@ -28,27 +27,8 @@ const Index = () => {
         <h1 className="text-4xl font-bold text-center md:text-left">Silver Price Tracker</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left column: Current price + Purchase history */}
-          <div className="space-y-4">
-            <SilverPrice purchases={purchases} />
-            
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Purchase History</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {purchases.map((purchase, idx) => (
-                  <div key={idx} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                    <div>
-                      <p className="font-medium text-sm">{purchase.description}</p>
-                      <p className="text-xs text-gray-500">{purchase.date}</p>
-                    </div>
-                    <p className="font-semibold">${purchase.purchasePrice.toFixed(2)}</p>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </div>
+          {/* Left column: Current price */}
+          <SilverPrice purchases={purchases} />
           
           {/* Right column: Chart */}
           <Card>
