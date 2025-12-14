@@ -1,16 +1,28 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, TrendingUp, TrendingDown } from "lucide-react";
 import silverDivisible2025 from "@/assets/silver-divisible-2025.jpg";
 
-const fetchSilverPrice = async () => {
-  const response = await fetch(
-    "https://ijmytxjcivenbqficxbx.supabase.co/functions/v1/get-silver-price"
-  );
+const SOURCES = [
+  { value: "auto", label: "Auto (Best Available)" },
+  { value: "polygon", label: "Polygon.io" },
+  { value: "finnhub", label: "Finnhub" },
+  { value: "yahoo", label: "Yahoo Finance" },
+];
+
+const fetchSilverPrice = async (source) => {
+  const url = source === "auto" 
+    ? "https://ijmytxjcivenbqficxbx.supabase.co/functions/v1/get-silver-price"
+    : `https://ijmytxjcivenbqficxbx.supabase.co/functions/v1/get-silver-price?source=${source}`;
+  
+  const response = await fetch(url);
 
   if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
     console.error("Edge function error:", response.status, response.statusText);
-    throw new Error("Failed to fetch silver price");
+    throw new Error(errorData.error || "Failed to fetch silver price");
   }
 
   const data = await response.json();
@@ -28,6 +40,8 @@ const getApiLink = (source) => {
       return "https://finnhub.io/docs/api/quote";
     case "Polygon.io":
       return "https://polygon.io/docs/stocks/get_v2_aggs_ticker__stocksticker__prev";
+    case "Yahoo Finance":
+      return "https://finance.yahoo.com/quote/SI=F/";
     default:
       return "#";
   }
@@ -75,9 +89,11 @@ const PriceChange = ({ currentPrice, purchasePrice, label, description, image, i
 };
 
 const SilverPrice = ({ purchases = [] }) => {
+  const [selectedSource, setSelectedSource] = useState("auto");
+  
   const { data, isLoading, error } = useQuery({
-    queryKey: ["silverPrice"],
-    queryFn: fetchSilverPrice,
+    queryKey: ["silverPrice", selectedSource],
+    queryFn: () => fetchSilverPrice(selectedSource),
     refetchInterval: 60000,
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
@@ -86,7 +102,21 @@ const SilverPrice = ({ purchases = [] }) => {
   return (
     <Card className="w-full">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg">Current Silver Price per 1 oz</CardTitle>
+        <div className="flex items-center justify-between gap-2">
+          <CardTitle className="text-lg">Current Silver Price per 1 oz</CardTitle>
+          <Select value={selectedSource} onValueChange={setSelectedSource}>
+            <SelectTrigger className="w-[160px] h-8 text-xs">
+              <SelectValue placeholder="Select source" />
+            </SelectTrigger>
+            <SelectContent>
+              {SOURCES.map((source) => (
+                <SelectItem key={source.value} value={source.value}>
+                  {source.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </CardHeader>
       <CardContent>
         {isLoading ? (
