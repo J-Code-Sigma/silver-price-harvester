@@ -1,67 +1,138 @@
-# Welcome to your GPT Engineer project
+# Silver Price Tracker Module
 
-## Project info
+A reusable React component for displaying real-time silver (XAG/USD) prices with multiple data source fallbacks, historical charts, and purchase tracking.
 
-**Project**: silver-price-harvester
+![Silver Price Tracker](assets/xagusd_cur.png)
 
-**URL**: https://run.gptengineer.app/projects/8c4595ea-ad13-4471-8db5-aed572bc2d15/improve
+## Features
 
-## How can I edit this code?
+- **Live Silver Price** - Real-time XAG/USD spot price with auto-refresh
+- **Multi-Source Fallback** - Automatically tries Finnhub → Polygon → Yahoo Finance
+- **Historical Chart** - Interactive price history visualization using Recharts
+- **Purchase Tracking** - Track silver purchases with profit/loss calculations
+- **Rate Limiting** - Built-in protection against API abuse
+- **Caching** - 60-second cache to reduce API calls
+- **Responsive Design** - Works on all screen sizes
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use GPT Engineer**
+- React 18 + Vite
+- Tailwind CSS + shadcn/ui
+- Recharts for data visualization
+- Supabase Edge Functions for API proxy
+- TanStack Query for data fetching
 
-Simply visit the GPT Engineer project at [GPT Engineer](https://gptengineer.app/projects/8c4595ea-ad13-4471-8db5-aed572bc2d15/improve) and start prompting.
+## Quick Start
 
-Changes made via gptengineer.app will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in the GPT Engineer UI.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
+```bash
+# Clone the repository
 git clone https://github.com/GPT-Engineer-App/silver-price-harvester.git
 cd silver-price-harvester
-npm i
 
-# This will run a dev server with auto reloading and an instant preview.
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Project Structure
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```
+├── src/
+│   ├── components/
+│   │   ├── SilverPrice.jsx          # Main price display component
+│   │   └── SilverHistoricalChart.jsx # Historical chart component
+│   └── assets/
+│       ├── silver-2024-bar.jpg
+│       ├── silver-2024-coins.jpg
+│       └── silver-divisible-2025.jpg
+├── public/
+│   └── data/
+│       └── silver-prices.csv         # Historical price data
+├── supabase/
+│   └── functions/
+│       └── get-silver-price/
+│           └── index.ts              # Edge function for API proxy
+└── SILVER_PRICE_MODULE.md            # Detailed module documentation
+```
 
-**Use GitHub Codespaces**
+## Using in Another Project
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+See [SILVER_PRICE_MODULE.md](./SILVER_PRICE_MODULE.md) for detailed instructions on extracting and reusing this module.
 
-## What technologies are used for this project?
+### Quick Integration
 
-This project is built with .
+1. Copy the required files (components, edge function, assets)
+2. Install dependencies: `@tanstack/react-query`, `recharts`, `lucide-react`
+3. Set up Supabase secrets: `FINNHUB_API_KEY`, `POLYGON_API_KEY`
+4. Update the edge function URL in `SilverPrice.jsx`
 
-- Vite
-- React
-- shadcn-ui
-- Tailwind CSS
+### Basic Usage
 
-## How can I deploy this project?
+```jsx
+import SilverPrice from './components/SilverPrice';
 
-All GPT Engineer projects can be deployed directly via the GPT Engineer app.
+function App() {
+  return <SilverPrice />;
+}
+```
 
-Simply visit your project at [GPT Engineer](https://gptengineer.app/projects/8c4595ea-ad13-4471-8db5-aed572bc2d15/improve) and click on Share -> Publish.
+### With Purchase Tracking
 
-## I want to use a custom domain - is that possible?
+```jsx
+const purchases = [
+  { date: '2024-01-15', ounces: 10, pricePerOunce: 23.50 },
+  { date: '2024-06-01', ounces: 5, pricePerOunce: 28.00 }
+];
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify or GitHub pages. Visit our docs for more details: [Custom domains](https://docs.gptengineer.app/tips-tricks/custom-domain/)
+<SilverPrice purchases={purchases} />
+```
+
+## API Sources
+
+| Source | Free Tier | Rate Limit |
+|--------|-----------|------------|
+| Finnhub | Yes | 60 calls/min |
+| Polygon | Yes | 5 calls/min |
+| Yahoo Finance | Yes (unofficial) | Varies |
+
+## Environment Variables
+
+The project uses Supabase for the backend. Required secrets (stored in Supabase, not in code):
+
+- `FINNHUB_API_KEY` - Get from [finnhub.io](https://finnhub.io)
+- `POLYGON_API_KEY` - Get from [polygon.io](https://polygon.io)
+
+## Development
+
+```bash
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+## Security Notes
+
+✅ **Safe for Open Source:**
+- API keys are stored as Supabase secrets (not in code)
+- `.env` only contains publishable/public keys
+- No sensitive data exposed in frontend code
+- Edge function proxies API calls securely
+
+## License
+
+MIT License - Feel free to use, modify, and distribute.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+---
+
+**URL**: https://run.gptengineer.app/projects/8c4595ea-ad13-4471-8db5-aed572bc2d15/improve
