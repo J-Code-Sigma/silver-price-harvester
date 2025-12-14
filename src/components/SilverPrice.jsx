@@ -117,7 +117,6 @@ const SilverPrice = ({ purchases = [] }) => {
             
             {purchases.length > 0 && (
               <div className="space-y-2 pt-2 border-t">
-                <p className="text-sm font-medium text-gray-700">Change from purchases:</p>
                 {purchases.map((purchase, idx) => (
                   <PriceChange
                     key={idx}
