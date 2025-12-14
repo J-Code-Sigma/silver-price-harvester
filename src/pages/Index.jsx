@@ -26,12 +26,10 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground p-4 md:p-8 flex flex-col">
       <div className="w-full max-w-6xl mx-auto space-y-6 flex-1">
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-center md:text-left">Silver Price Tracker</h1>
-          <div className="flex justify-center md:justify-start">
-            <ThemeToggle />
-          </div>
+        <div className="flex justify-end">
+          <ThemeToggle />
         </div>
+        <h1 className="text-4xl font-bold text-center md:text-left -mt-4">Silver Price Tracker</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left column: Current price */}
