@@ -91,13 +91,15 @@ const PriceChange = ({ currentPrice, purchasePrice, label, description, image, i
 const SilverPrice = ({ purchases = [] }) => {
   const [selectedSource, setSelectedSource] = useState("auto");
   
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, isFetching, error } = useQuery({
     queryKey: ["silverPrice", selectedSource],
     queryFn: () => fetchSilverPrice(selectedSource),
     refetchInterval: 60000,
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
+
+  const showLoader = isLoading || isFetching;
 
   return (
     <Card className="w-full">
@@ -118,13 +120,16 @@ const SilverPrice = ({ purchases = [] }) => {
           </Select>
         </div>
       </CardHeader>
-      <CardContent>
-        {isLoading ? (
-          <div className="flex items-center space-x-2">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <p>Loading...</p>
+      <CardContent className="relative">
+        {showLoader && (
+          <div className="absolute inset-0 bg-background/80 flex items-center justify-center z-10 rounded-lg">
+            <div className="flex items-center space-x-2">
+              <Loader2 className="h-5 w-5 animate-spin text-primary" />
+              <p className="text-sm text-muted-foreground">Fetching price...</p>
+            </div>
           </div>
-        ) : error ? (
+        )}
+        {error && !data ? (
           <div className="text-red-500">
             <p>Error: {error.message}</p>
             <p className="text-sm mt-1">Please refresh this page, that may fix it.</p>
