@@ -6,8 +6,8 @@ import { Loader2, TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
 import silverDivisible2025 from "@/assets/silver-divisible-2025.jpg";
 
 const SOURCES = [
-  { value: "yahoo", label: "Yahoo Finance" },
   { value: "polygon", label: "Polygon.io" },
+  { value: "yahoo", label: "Yahoo Finance" },
 ];
 
 const fetchSilverPrice = async (source) => {
@@ -87,7 +87,7 @@ const PriceChange = ({ currentPrice, purchasePrice, label, description, image, i
 };
 
 const SilverPrice = ({ purchases = [] }) => {
-  const [selectedSource, setSelectedSource] = useState("yahoo");
+  const [selectedSource, setSelectedSource] = useState("polygon");
   
   const { data, isLoading, isFetching, error } = useQuery({
     queryKey: ["silverPrice", selectedSource],
