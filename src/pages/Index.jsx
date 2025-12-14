@@ -1,14 +1,17 @@
 import SilverPrice from "../components/SilverPrice";
 import chart from '../../assets/xagusd_cur.png';
 import silverDivisible2025 from "@/assets/silver-divisible-2025.jpg";
+import silver2024Coins from "@/assets/silver-2024-coins.jpg";
+import silver2024Bar from "@/assets/silver-2024-bar.jpg";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp, TrendingDown } from "lucide-react";
 
 const purchases = [
   {
     date: "08/08/2024",
-    description: "1 oz Silver Christmas Presents",
+    description: "2024 Christmas Present - 1 oz Silver",
     purchasePrice: 29.6775,
+    images: [silver2024Coins, silver2024Bar],
   },
   {
     date: "10/14/2025",

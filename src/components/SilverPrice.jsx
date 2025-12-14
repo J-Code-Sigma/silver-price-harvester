@@ -33,19 +33,27 @@ const getApiLink = (source) => {
   }
 };
 
-const PriceChange = ({ currentPrice, purchasePrice, label, description, image }) => {
+const PriceChange = ({ currentPrice, purchasePrice, label, description, image, images }) => {
   const change = currentPrice - purchasePrice;
   const changePercent = ((change / purchasePrice) * 100).toFixed(1);
   const isPositive = change >= 0;
 
+  // Support both single image and multiple images
+  const displayImages = images || (image ? [image] : []);
+
   return (
     <div className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
-      {image && (
-        <img 
-          src={image} 
-          alt={label} 
-          className="w-16 h-16 object-cover rounded-md flex-shrink-0"
-        />
+      {displayImages.length > 0 && (
+        <div className="flex gap-1 flex-shrink-0">
+          {displayImages.map((img, idx) => (
+            <img 
+              key={idx}
+              src={img} 
+              alt={`${label} ${idx + 1}`} 
+              className="w-12 h-12 object-cover rounded-md"
+            />
+          ))}
+        </div>
       )}
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between gap-2">
@@ -118,6 +126,7 @@ const SilverPrice = ({ purchases = [] }) => {
                     label={purchase.date}
                     description={purchase.description}
                     image={purchase.image}
+                    images={purchase.images}
                   />
                 ))}
               </div>
