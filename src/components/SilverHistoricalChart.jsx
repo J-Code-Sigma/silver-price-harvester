@@ -104,20 +104,25 @@ const SilverHistoricalChart = ({ purchases = [] }) => {
                     borderRadius: '8px'
                   }}
                 />
-                {purchases.map((purchase, idx) => (
-                  <ReferenceLine 
-                    key={idx}
-                    y={purchase.purchasePrice} 
-                    stroke="#ef4444" 
-                    strokeDasharray="3 3"
-                    label={{ 
-                      value: `${purchase.date.split('/')[2]}`, 
-                      position: 'right',
-                      fontSize: 10,
-                      fill: '#ef4444'
-                    }}
-                  />
-                ))}
+                {purchases.map((purchase, idx) => {
+                  const year = purchase.date.includes('/') 
+                    ? purchase.date.split('/')[2] 
+                    : purchase.date.split('-')[0];
+                  return (
+                    <ReferenceLine 
+                      key={idx}
+                      y={purchase.purchasePrice} 
+                      stroke="#ef4444" 
+                      strokeDasharray="3 3"
+                      label={{ 
+                        value: `${year} Buy: $${purchase.purchasePrice}`, 
+                        position: 'insideTopRight',
+                        fontSize: 10,
+                        fill: '#ef4444'
+                      }}
+                    />
+                  );
+                })}
                 <Line 
                   type="linear" 
                   dataKey="value" 
