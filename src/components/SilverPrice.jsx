@@ -112,10 +112,10 @@ const SilverPrice = ({ purchases = [] }) => {
   return (
     <Card className="w-full">
       <CardHeader className="pb-2">
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <CardTitle className="text-lg">Current Silver Price per 1 oz</CardTitle>
           <Select value={selectedSource} onValueChange={setSelectedSource}>
-            <SelectTrigger className="w-[160px] h-8 text-xs">
+            <SelectTrigger className="w-full sm:w-[160px] h-8 text-xs">
               <SelectValue placeholder="Select source" />
             </SelectTrigger>
             <SelectContent>
