@@ -44,26 +44,26 @@ const PriceChange = ({ currentPrice, purchasePrice, label, description, image, i
   return (
     <div className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
       {displayImages.length > 0 && (
-        <div className="flex gap-1 flex-shrink-0">
-          {displayImages.map((img, idx) => (
-            <img 
-              key={idx}
-              src={img} 
-              alt={`${label} ${idx + 1}`} 
-              className="w-12 h-12 object-cover rounded-md"
-            />
-          ))}
+        <div className="flex-shrink-0">
+          <span className="text-sm font-medium text-foreground block mb-1">{label}</span>
+          <div className="flex gap-1">
+            {displayImages.map((img, idx) => (
+              <img 
+                key={idx}
+                src={img} 
+                alt={`${label} ${idx + 1}`} 
+                className="w-12 h-12 object-cover rounded-md"
+              />
+            ))}
+          </div>
         </div>
       )}
       <div className="flex-1 min-w-0 space-y-1">
-        <div className="flex items-center gap-3">
-          <span className="text-sm font-medium text-foreground w-24 flex-shrink-0">{label}</span>
-          <div className={`flex items-center gap-1 ${isPositive ? "text-green-600" : "text-red-600"}`}>
-            {isPositive ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-            <span className="font-semibold text-sm">
-              {isPositive ? "+" : ""}${change.toFixed(2)} ({isPositive ? "+" : ""}{changePercent}%)
-            </span>
-          </div>
+        <div className={`flex items-center gap-1 ${isPositive ? "text-green-600" : "text-red-600"}`}>
+          {isPositive ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+          <span className="font-semibold text-sm">
+            {isPositive ? "+" : ""}${change.toFixed(2)} ({isPositive ? "+" : ""}{changePercent}%)
+          </span>
         </div>
         {description && (
           <p className="text-xs text-muted-foreground">{description}</p>
