@@ -42,7 +42,7 @@ const SilverPrice = () => {
   return (
     <Card className="w-full max-w-xs">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg">Current Silver Price</CardTitle>
+        <CardTitle className="text-lg">Current Silver Price per 1 oz</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
