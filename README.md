@@ -135,4 +135,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ---
 
-**URL**: https://run.gptengineer.app/projects/8c4595ea-ad13-4471-8db5-aed572bc2d15/improve
+**Repository**: https://github.com/J-Code-Sigma/silver-price-harvester
