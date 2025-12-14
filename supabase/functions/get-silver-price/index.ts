@@ -23,16 +23,22 @@ const fetchFromFinnhub = async (apiKey: string) => {
 };
 
 const fetchFromPolygon = async (apiKey: string) => {
-  console.log('Trying Polygon API...');
-  const url = `https://api.polygon.io/v2/aggs/ticker/C:XAGUSD/prev?apiKey=${apiKey}`;
+  console.log('Trying Polygon API v3...');
+  const url = `https://api.polygon.io/v3/snapshot?ticker.any_of=C:XAGUSD&apiKey=${apiKey}`;
   const response = await fetch(url);
   
   if (response.ok) {
     const data = await response.json();
-    console.log('Polygon response:', JSON.stringify(data));
+    console.log('Polygon v3 response:', JSON.stringify(data));
     
-    if (data.results && data.results.length > 0) {
-      return { price: data.results[0].c, source: 'Polygon.io' };
+    // v3 snapshot returns results array with session data
+    if (data.results && data.results.length > 0 && data.results[0].session) {
+      const session = data.results[0].session;
+      // Use close price, or if not available use previous_close
+      const price = session.close || session.previous_close;
+      if (price && price > 0) {
+        return { price, source: 'Polygon.io' };
+      }
     }
   }
   return null;
