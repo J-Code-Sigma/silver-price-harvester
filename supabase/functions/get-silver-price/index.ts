@@ -6,6 +6,38 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Simple in-memory rate limiting
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT = 30; // requests per window
+const RATE_WINDOW_MS = 60 * 1000; // 1 minute window
+
+// Simple in-memory cache for price responses
+let cachedResponse: { data: any; timestamp: number } | null = null;
+const CACHE_TTL_MS = 60 * 1000; // Cache for 1 minute
+
+const getClientIP = (req: Request): string => {
+  return req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
+         req.headers.get('x-real-ip') || 
+         'unknown';
+};
+
+const isRateLimited = (clientIP: string): boolean => {
+  const now = Date.now();
+  const clientData = rateLimitMap.get(clientIP);
+  
+  if (!clientData || now > clientData.resetTime) {
+    rateLimitMap.set(clientIP, { count: 1, resetTime: now + RATE_WINDOW_MS });
+    return false;
+  }
+  
+  if (clientData.count >= RATE_LIMIT) {
+    return true;
+  }
+  
+  clientData.count++;
+  return false;
+};
+
 const fetchFromFinnhub = async (apiKey: string) => {
   console.log('Trying Finnhub API...');
   const url = `https://finnhub.io/api/v1/quote?symbol=SI=F&token=${apiKey}`;
@@ -71,6 +103,25 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const clientIP = getClientIP(req);
+  console.log(`Request from IP: ${clientIP}`);
+
+  // Check rate limit
+  if (isRateLimited(clientIP)) {
+    console.log(`Rate limit exceeded for IP: ${clientIP}`);
+    return new Response(
+      JSON.stringify({ error: 'Too many requests. Please try again later.' }),
+      { 
+        status: 429, 
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json',
+          'Retry-After': '60'
+        } 
+      }
+    );
+  }
+
   const finnhubApiKey = Deno.env.get('FINNHUB_API_KEY');
   const polygonApiKey = Deno.env.get('POLYGON_API_KEY');
 
@@ -79,6 +130,15 @@ serve(async (req) => {
   const requestedSource = url.searchParams.get('source');
 
   console.log('Fetching silver price...', requestedSource ? `Requested source: ${requestedSource}` : 'Auto mode');
+
+  // Check cache first (only for non-specific source requests to maximize cache hits)
+  if (!requestedSource && cachedResponse && Date.now() - cachedResponse.timestamp < CACHE_TTL_MS) {
+    console.log('Returning cached response');
+    return new Response(
+      JSON.stringify({ ...cachedResponse.data, cached: true }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
 
   try {
     let result = null;
@@ -118,6 +178,7 @@ serve(async (req) => {
     try {
       result = await fetchFromFinnhub(finnhubApiKey!);
       if (result) {
+        cachedResponse = { data: result, timestamp: Date.now() };
         return new Response(
           JSON.stringify(result),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -132,6 +193,7 @@ serve(async (req) => {
     try {
       result = await fetchFromPolygon(polygonApiKey!);
       if (result) {
+        cachedResponse = { data: result, timestamp: Date.now() };
         return new Response(
           JSON.stringify(result),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -146,6 +208,7 @@ serve(async (req) => {
     try {
       result = await fetchFromYahoo();
       if (result) {
+        cachedResponse = { data: result, timestamp: Date.now() };
         return new Response(
           JSON.stringify(result),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
