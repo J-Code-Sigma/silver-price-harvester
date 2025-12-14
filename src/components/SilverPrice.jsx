@@ -129,29 +129,31 @@ const SilverPrice = ({ purchases = [] }) => {
               <p className="text-3xl font-bold">
                 ${data.price.toFixed(2)} USD
               </p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Source:{" "}
-                <a
-                  href={getApiLink(data.source)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 hover:underline"
-                >
-                  {data.source}
-                </a>
-              </p>
-              <Select value={selectedSource} onValueChange={setSelectedSource}>
-                <SelectTrigger className="w-full sm:w-[220px] h-8 text-xs mt-2">
-                  <SelectValue placeholder="Select source" />
-                </SelectTrigger>
-                <SelectContent>
-                  {SOURCES.map((source) => (
-                    <SelectItem key={source.value} value={source.value}>
-                      {source.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-1">
+                <p className="text-sm text-muted-foreground">
+                  Source:{" "}
+                  <a
+                    href={getApiLink(data.source)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:underline"
+                  >
+                    {data.source}
+                  </a>
+                </p>
+                <Select value={selectedSource} onValueChange={setSelectedSource}>
+                  <SelectTrigger className="w-full sm:w-[220px] h-8 text-xs">
+                    <SelectValue placeholder="Select source" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SOURCES.map((source) => (
+                      <SelectItem key={source.value} value={source.value}>
+                        {source.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             
             {purchases.length > 0 && (
