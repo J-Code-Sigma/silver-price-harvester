@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
 import { Loader2 } from "lucide-react";
 
 const SilverHistoricalChart = ({ purchases = [] }) => {
@@ -81,13 +81,7 @@ const SilverHistoricalChart = ({ purchases = [] }) => {
         ) : (
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="silverGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#94a3b8" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#94a3b8" stopOpacity={0.1}/>
-                  </linearGradient>
-                </defs>
+              <LineChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <XAxis 
                   dataKey="date" 
                   tickFormatter={formatXAxis}
@@ -122,14 +116,14 @@ const SilverHistoricalChart = ({ purchases = [] }) => {
                     }}
                   />
                 ))}
-                <Area 
-                  type="monotone" 
+                <Line 
+                  type="linear" 
                   dataKey="value" 
                   stroke="#64748b" 
                   strokeWidth={2}
-                  fill="url(#silverGradient)" 
+                  dot={false}
                 />
-              </AreaChart>
+              </LineChart>
             </ResponsiveContainer>
           </div>
         )}
