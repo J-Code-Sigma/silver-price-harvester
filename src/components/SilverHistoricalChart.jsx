@@ -34,8 +34,10 @@ const SilverHistoricalChart = ({ purchases = [] }) => {
           yearlyData[item.year] = item;
         }
 
-        // Convert to array and sort by year
-        const sortedData = Object.values(yearlyData).sort((a, b) => a.year - b.year);
+        // Convert to array, filter from 1950 onward, and sort by year
+        const sortedData = Object.values(yearlyData)
+          .filter(item => item.year >= 1950)
+          .sort((a, b) => a.year - b.year);
 
         setData(sortedData);
       } catch (error) {
@@ -59,7 +61,7 @@ const SilverHistoricalChart = ({ purchases = [] }) => {
   return (
     <Card className="h-full">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg">Historical Silver Prices (1915-2025)</CardTitle>
+        <CardTitle className="text-lg">Historical Silver Prices (1950-2025)</CardTitle>
       </CardHeader>
       <CardContent>
         <p className="text-sm text-muted-foreground mb-4">
