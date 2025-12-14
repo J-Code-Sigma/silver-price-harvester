@@ -26,7 +26,12 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground p-4 md:p-8 flex flex-col">
       <div className="w-full max-w-6xl mx-auto space-y-6 flex-1">
-        <h1 className="text-4xl font-bold text-center md:text-left">Silver Price Tracker</h1>
+        <div className="space-y-2">
+          <h1 className="text-4xl font-bold text-center md:text-left">Silver Price Tracker</h1>
+          <div className="flex justify-center md:justify-start">
+            <ThemeToggle />
+          </div>
+        </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left column: Current price */}
@@ -38,18 +43,15 @@ const Index = () => {
       </div>
       
       <footer className="w-full max-w-6xl mx-auto mt-8 pt-4 border-t border-border">
-        <div className="flex items-center justify-center gap-4">
-          <a
-            href="https://github.com/J-Code-Sigma/silver-price-harvester"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors py-2"
-          >
-            <Github className="h-5 w-5" />
-            <span className="text-sm font-medium">View on GitHub</span>
-          </a>
-          <ThemeToggle />
-        </div>
+        <a
+          href="https://github.com/J-Code-Sigma/silver-price-harvester"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 text-muted-foreground hover:text-foreground transition-colors py-2"
+        >
+          <Github className="h-5 w-5" />
+          <span className="text-sm font-medium">View on GitHub</span>
+        </a>
       </footer>
     </div>
   );
