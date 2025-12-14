@@ -4,6 +4,7 @@ import silverDivisible2025 from "@/assets/silver-divisible-2025.jpg";
 import silver2024Coins from "@/assets/silver-2024-coins.jpg";
 import silver2024Bar from "@/assets/silver-2024-bar.jpg";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Github } from "lucide-react";
 
 const purchases = [
   {
@@ -24,7 +25,18 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-4 md:p-8">
       <div className="w-full max-w-6xl mx-auto space-y-6">
-        <h1 className="text-4xl font-bold text-center md:text-left">Silver Price Tracker</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-4xl font-bold text-center md:text-left">Silver Price Tracker</h1>
+          <a
+            href="https://github.com/J-Code-Sigma/silver-price-harvester"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <Github className="h-6 w-6" />
+            <span className="hidden sm:inline text-sm font-medium">View on GitHub</span>
+          </a>
+        </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left column: Current price */}
