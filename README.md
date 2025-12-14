@@ -26,7 +26,7 @@ A reusable React component for displaying real-time silver (XAG/USD) prices with
 
 ```bash
 # Clone the repository
-git clone https://github.com/GPT-Engineer-App/silver-price-harvester.git
+git clone https://github.com/J-Code-Sigma/silver-price-harvester.git
 cd silver-price-harvester
 
 # Install dependencies
