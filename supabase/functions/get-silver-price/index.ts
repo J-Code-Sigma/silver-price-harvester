@@ -87,10 +87,10 @@ serve(async (req) => {
     console.error('Yahoo Finance API error:', yahooError);
   }
 
-  // All live sources failed - return last known approximate price as fallback
-  console.log('All live sources unavailable, using fallback price');
+  // All live sources failed - return error
+  console.log('All live sources unavailable');
   return new Response(
-    JSON.stringify({ price: 61.93, source: 'Fallback (markets closed)' }),
-    { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    JSON.stringify({ error: 'Unable to fetch live price. Please refresh to try again.' }),
+    { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
   );
 });
