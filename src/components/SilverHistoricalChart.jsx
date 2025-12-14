@@ -61,7 +61,7 @@ const SilverHistoricalChart = ({ purchases = [] }) => {
   return (
     <Card className="h-full">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg">Merry Chrysler!</CardTitle>
+        <CardTitle className="text-lg">Historical Silver Prices (1950-2025)</CardTitle>
       </CardHeader>
       <CardContent>
         <p className="text-sm text-muted-foreground mb-4">
@@ -115,7 +115,7 @@ const SilverHistoricalChart = ({ purchases = [] }) => {
                       stroke="#ef4444" 
                       strokeDasharray="3 3"
                       label={{ 
-                        value: `${year} Buy: $${purchase.purchasePrice.toFixed(2)}`, 
+                        value: `${year} Buy: $${purchase.purchasePrice}`, 
                         position: 'insideTopRight',
                         fontSize: 10,
                         fill: '#ef4444'
