@@ -3,7 +3,24 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
-import silverDivisible2025 from "@/assets/silver-divisible-2025.jpg";
+
+/**
+ * SilverPrice Component
+ * 
+ * A reusable component for displaying live silver prices with optional purchase tracking.
+ * 
+ * @param {string} apiUrl - Base URL for the silver price API endpoint (required for portability)
+ * @param {Array} purchases - Array of purchase objects for tracking profit/loss
+ * @param {number} refetchInterval - How often to refresh price in ms (default: 60000)
+ * 
+ * Example usage:
+ * <SilverPrice 
+ *   apiUrl="https://your-project.supabase.co/functions/v1/get-silver-price"
+ *   purchases={[{ date: "Jan 2024", purchasePrice: 23.50, description: "Silver coins" }]}
+ * />
+ */
+
+const DEFAULT_API_URL = "https://ijmytxjcivenbqficxbx.supabase.co/functions/v1/get-silver-price";
 
 const SOURCES = [
   { value: "auto", label: "Price Source (Best Available)" },
@@ -11,10 +28,10 @@ const SOURCES = [
   { value: "yahoo", label: "Yahoo Finance" },
 ];
 
-const fetchSilverPrice = async (source) => {
+const fetchSilverPrice = async (source, apiUrl) => {
   const url = source === "auto" 
-    ? "https://ijmytxjcivenbqficxbx.supabase.co/functions/v1/get-silver-price"
-    : `https://ijmytxjcivenbqficxbx.supabase.co/functions/v1/get-silver-price?source=${source}`;
+    ? apiUrl
+    : `${apiUrl}?source=${source}`;
   
   const response = await fetch(url);
 
@@ -86,13 +103,17 @@ const PriceChange = ({ currentPrice, purchasePrice, label, description, image, i
   );
 };
 
-const SilverPrice = ({ purchases = [] }) => {
+const SilverPrice = ({ 
+  apiUrl = DEFAULT_API_URL, 
+  purchases = [],
+  refetchInterval = 60000 
+}) => {
   const [selectedSource, setSelectedSource] = useState("auto");
   
   const { data, isLoading, isFetching, error } = useQuery({
-    queryKey: ["silverPrice", selectedSource],
-    queryFn: () => fetchSilverPrice(selectedSource),
-    refetchInterval: 60000,
+    queryKey: ["silverPrice", selectedSource, apiUrl],
+    queryFn: () => fetchSilverPrice(selectedSource, apiUrl),
+    refetchInterval,
     retry: 1,
     retryDelay: 1000,
     keepPreviousData: true,
